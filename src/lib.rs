@@ -1,6 +1,17 @@
 //! Simple macros to declare 'type checked' aliases for integers and floats.
 //!
-//! For usage, see float_alias and int_alias page.
+//! # Examples
+//!
+//! ```
+//! #[macro_use]
+//! extern crate num_alias;
+//! fn main() {
+//!     float_alias!(Fval, f64);
+//!     let a = Fval(5.0);
+//!     let b = Fval(4.0);
+//!     let c = (a * b).sqrt();
+//! }
+//! ```
 
 /// A simple macro to Declare alias for Integer types and implement arithmetics.
 ///
