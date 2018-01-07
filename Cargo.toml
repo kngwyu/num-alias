@@ -1,6 +1,6 @@
 
 [package]
-name = "num-alias"
+name = "num_alias"
 version = "0.1.2"
 authors = ["kngwyu <yuji.kngw.80s.revive@gmail.com>"]
 repository = "https://github.com/kngwyu/num-alias"
