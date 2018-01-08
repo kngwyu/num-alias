@@ -37,7 +37,10 @@
 ///
 /// Concretely, it implements for the alias type, Add, Sub, Mul, Div, Rem, AddAssign, SubAssign, MulAssign, DivAssign, RemAssign, Deref(for accessing inner value).
 ///
-/// In addition, Clone, Copy, Debug, Default, Eq, Ord, PartialEq, PartialOrd are Derived.
+/// In addition, Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd are Derived.
+///
+/// If not declared with range, Default is also derived.
+///
 /// # Examples
 /// Basic usage: just aliasing int.
 ///
@@ -80,7 +83,7 @@ macro_rules! int_alias {
         __impl_arithmetic!($alias, $type);
     };
     ($alias:ident, $type:ty, $lb:expr => $hb:expr) => {
-        #[derive(Clone, Copy, Debug, Default, Eq, Ord, PartialEq, PartialOrd)]
+        #[derive(Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd)]
         pub struct $alias {
             inner: $type
         }
@@ -107,6 +110,9 @@ macro_rules! int_alias {
 /// Concretely, it implements for the alias type, Add, Sub, Mul, Div, Rem, AddAssign, SubAssign, MulAssign, DivAssign, RemAssign, Deref(for accessing inner value).
 ///
 /// In addition, Clone, Copy, Debug, Default, PartialEq, PartialOrd are Derived.
+///
+/// If not declared with range, Default is also derived.
+///
 /// # Examples
 /// Basic usage: just aliasing float.
 ///
@@ -149,7 +155,7 @@ macro_rules! float_alias {
         __impl_arithmetic!($alias, $type);
     };
     ($alias:ident, $type:ty, $lb:expr => $hb:expr) => {
-        #[derive(Clone, Copy, Debug, Default, PartialEq, PartialOrd)]
+        #[derive(Clone, Copy, Debug, PartialEq, PartialOrd)]
         pub struct $alias {
             inner: $type
         }
