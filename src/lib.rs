@@ -13,12 +13,11 @@
 //! }
 //! ```
 
-/// A simple macro to Declare alias for Integer types and implement arithmetics.
+/// A simple macro to declare alias for Integer types and implement arithmetics.
 ///
-/// Concretely, it implements for the alias type, Add, Sub, Mul, Div, Rem, AddAssign, SubAssign, MulAssign, DivAssign, RemAssign.
-/// And Debug, Copy, Clone, PartialEq, PartialOrd, Eq, Ord are Derived.
+/// Concretely, it implements for the alias type, Add, Sub, Mul, Div, Rem, AddAssign, SubAssign, MulAssign, DivAssign, RemAssign, Deref(for accessing inner value).
 ///
-/// You can access its value by deref.
+/// In addition, Clone, Copy, Debug, Default, Eq, Ord, PartialEq, PartialOr are Derived.
 /// # Examples
 ///
 /// ```
@@ -34,7 +33,7 @@
 #[macro_export]
 macro_rules! int_alias {
     ($alias:ident, $type:ty) => {
-        #[derive(Debug, Copy, Clone, PartialEq, PartialOrd, Eq, Ord)]
+        #[derive(Clone, Copy, Debug, Default, Eq, Ord, PartialEq, PartialOrd)]
         pub struct $alias($type);
         impl ::std::ops::Deref for $alias {
             type Target = $type;
@@ -100,12 +99,11 @@ macro_rules! int_alias {
     }
 }
 
-/// A simple macro to Declare alias for Integer types and implement arithmetics.
+/// A simple macro to declare alias for Integer types and implement arithmetics.
 ///
-/// Concretely, it implements for the alias type, Add, Sub, Mul, Div, Rem, AddAssign, SubAssign, MulAssign, DivAssign, RemAssign.
-/// And Debug, Copy, Clone, PartialEq, PartialOrd are Derived.
+/// Concretely, it implements for the alias type, Add, Sub, Mul, Div, Rem, AddAssign, SubAssign, MulAssign, DivAssign, RemAssign, Deref(for accessing inner value).
 ///
-/// You can access its value by deref.
+/// In addition, Clone, Copy, Debug, Default, PartialEq, PartialOrd are Derived.
 /// # Examples
 ///
 /// ```
@@ -121,7 +119,7 @@ macro_rules! int_alias {
 #[macro_export]
 macro_rules! float_alias {
     ($alias:ident, $type:ty) => {
-        #[derive(Debug, Copy, Clone, PartialEq, PartialOrd)]
+        #[derive(Clone, Copy, Debug, Default, PartialEq, PartialOrd)]
         pub struct $alias($type);
         impl ::std::ops::Deref for $alias {
             type Target = $type;
@@ -191,7 +189,6 @@ mod tests {
     #[test]
     fn it_works() {
         int_alias!(Val, i32);
-        float_alias!(Fval, f64);
         let a = Val(20);
         assert_eq!(*a, 20);
         let b = Val(6);
@@ -200,6 +197,8 @@ mod tests {
         assert_eq!(a * b, Val(120));
         assert_eq!(a / b, Val(3));
         assert_eq!(a % b, Val(2));
+        assert_eq!(0, *Val::default());
+        float_alias!(Fval, f64);
         let a = Fval(20.0);
         let b = Fval(6.0);
         assert_eq!(a + b, Fval(26.0));
@@ -208,5 +207,6 @@ mod tests {
         assert_eq!(a / b, Fval(20.0 / 6.0));
         assert_eq!(a % b, Fval(2.0));
         assert_eq!(a.sqrt(), 20.0f64.sqrt());
+        assert_eq!(0.0, *Fval::default());
     }
 }
