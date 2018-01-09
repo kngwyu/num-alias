@@ -73,7 +73,7 @@
 macro_rules! int_alias {
     ($alias:ident, $type:ty) => {
         #[derive(Clone, Copy, Debug, Default, Eq, Ord, PartialEq, PartialOrd)]
-        pub struct $alias($type);
+        pub struct $alias(pub $type);
         impl ::std::ops::Deref for $alias {
             type Target = $type;
             fn deref(&self) -> &$type {
@@ -138,14 +138,14 @@ macro_rules! int_alias {
 ///     let a = Fval(5.0);
 ///     let b = Fval(4.0);
 ///     // this code panics
-///     let c = (a * b).sqrt();
+///     let c = (a * -b).sqrt();
 /// }
 /// ```
 #[macro_export]
 macro_rules! float_alias {
     ($alias:ident, $type:ty) => {
         #[derive(Clone, Copy, Debug, Default, PartialEq, PartialOrd)]
-        pub struct $alias($type);
+        pub struct $alias(pub $type);
         impl ::std::ops::Deref for $alias {
             type Target = $type;
             fn deref(&self) -> &$type {
@@ -153,6 +153,7 @@ macro_rules! float_alias {
             }
         }
         __impl_arithmetic!($alias, $type);
+        __impl_neg!($alias);
     };
     ($alias:ident, $type:ty, $lb:expr => $hb:expr) => {
         #[derive(Clone, Copy, Debug, PartialEq, PartialOrd)]
@@ -174,6 +175,45 @@ macro_rules! float_alias {
             }
         }
         __impl_arithmetic!($alias, $type);
+        __impl_neg!($alias);
+    }
+}
+
+#[macro_export]
+#[doc(hidden)]
+macro_rules! __impl_neg {
+    ($alias:ident) => {
+        impl ::std::ops::Neg for $alias {
+            type Output = $alias;
+            fn neg(self) -> $alias {
+                $alias(-*self)
+            }
+        }
+    }
+}
+
+#[macro_export]
+#[doc(hidden)]
+macro_rules! __impl_arith_consume {
+    ($alias:ident, $type:ty, $tr:path, $func:ident) => {
+        impl $tr for $alias {
+            type Output = $alias;
+            fn $func(self, other: $alias) -> $alias {
+                $alias((*self).$func(*other))
+            }
+        }
+    }
+}
+
+#[macro_export]
+#[doc(hidden)]
+macro_rules! __impl_assign_consume {
+    ($alias:ident, $type:ty, $tr:path, $func:ident, $ope:tt) => {
+        impl $tr for $alias {
+            fn $func(&mut self, other: $alias) {
+                *self = *self $ope other;
+            }
+        }
     }
 }
 
@@ -181,61 +221,16 @@ macro_rules! float_alias {
 #[doc(hidden)]
 macro_rules! __impl_arithmetic {
     ($alias:ident, $type:ty) => {
-        impl ::std::ops::Add for $alias {
-            type Output = $alias;
-            fn add(self, other: $alias) -> $alias {
-                $alias(*self + *other)
-            }
-        }
-        impl ::std::ops::Sub for $alias {
-            type Output = $alias;
-            fn sub(self, other: $alias) -> $alias {
-                $alias(*self - *other)
-            }
-        }
-        impl ::std::ops::Mul for $alias {
-            type Output = $alias;
-            fn mul(self, other: $alias) -> $alias {
-                $alias(*self * *other)
-            }
-        }
-        impl ::std::ops::Div for $alias {
-            type Output = $alias;
-            fn div(self, other: $alias) -> $alias {
-                $alias(*self / *other)
-            }
-        }
-        impl ::std::ops::Rem for $alias {
-            type Output = $alias;
-            fn rem(self, other: $alias) -> $alias {
-                $alias(*self % *other)
-            }
-        }
-        impl ::std::ops::AddAssign for $alias {
-            fn add_assign(&mut self, other: $alias) {
-                *self = *self + other
-            }
-        }
-        impl ::std::ops::SubAssign for $alias {
-            fn sub_assign(&mut self, other: $alias) {
-                *self = *self - other
-            }
-        }
-        impl ::std::ops::MulAssign for $alias {
-            fn mul_assign(&mut self, other: $alias) {
-                *self = *self * other
-            }
-        }
-        impl ::std::ops::DivAssign for $alias {
-            fn div_assign(&mut self, other: $alias) {
-                *self = *self / other
-            }
-        }
-        impl ::std::ops::RemAssign for $alias {
-            fn rem_assign(&mut self, other: $alias) {
-                *self = *self % other
-            }
-        }
+        __impl_arith_consume!($alias, $type, ::std::ops::Add, add);
+        __impl_arith_consume!($alias, $type, ::std::ops::Sub, sub);
+        __impl_arith_consume!($alias, $type, ::std::ops::Mul, mul);
+        __impl_arith_consume!($alias, $type, ::std::ops::Div, div);
+        __impl_arith_consume!($alias, $type, ::std::ops::Rem, rem);
+        __impl_assign_consume!($alias, $type, ::std::ops::AddAssign, add_assign, +);
+        __impl_assign_consume!($alias, $type, ::std::ops::SubAssign, sub_assign, -);
+        __impl_assign_consume!($alias, $type, ::std::ops::MulAssign, mul_assign, *);
+        __impl_assign_consume!($alias, $type, ::std::ops::DivAssign, div_assign, /);
+        __impl_assign_consume!($alias, $type, ::std::ops::RemAssign, rem_assign, %);
     }
 }
 
@@ -282,6 +277,6 @@ mod tests {
         float_alias!(Fval, f64, 3 => 6);
         let a = Fval(3.4);
         let b = Fval(4.2);
-        let c = a + b;
+        let c = -b + a;
     }
 }
