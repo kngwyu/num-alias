@@ -35,7 +35,7 @@
 
 /// A simple macro to declare alias for Integer types and implement arithmetics.
 ///
-/// Concretely, it implements for the alias type, Add, Sub, Mul, Div, Rem, AddAssign, SubAssign, MulAssign, DivAssign, RemAssign, Deref(for accessing inner value).
+/// Concretely, this implements for the alias type, Add, Sub, Mul, Div, Rem, AddAssign, SubAssign, MulAssign, DivAssign, RemAssign, Deref(for accessing inner value).
 ///
 /// In addition, Clone, Copy, Debug, Eq, Ord, PartialEq, PartialOrd are Derived.
 ///
@@ -105,9 +105,9 @@ macro_rules! int_alias {
     }
 }
 
-/// A simple macro to declare alias for Integer types and implement arithmetics.
+/// A simple macro to declare alias for Float types and implement arithmetics.
 ///
-/// Concretely, it implements for the alias type, Add, Sub, Mul, Div, Rem, AddAssign, SubAssign, MulAssign, DivAssign, RemAssign, Deref(for accessing inner value).
+/// Concretely, this macro implements for the alias type, Add, Sub, Mul, Div, Rem, AddAssign, SubAssign, MulAssign, DivAssign, RemAssign, Neg, Deref(for accessing inner value).
 ///
 /// In addition, Clone, Copy, Debug, Default, PartialEq, PartialOrd are Derived.
 ///
