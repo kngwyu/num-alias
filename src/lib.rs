@@ -237,9 +237,8 @@ macro_rules! __impl_arithmetic {
 #[cfg(test)]
 mod tests {
     #[test]
-    fn normal_alias() {
+    fn normal_i32() {
         int_alias!(Val, i32);
-        float_alias!(Fval, f64);
         let a = Val(20);
         assert_eq!(*a, 20);
         let b = Val(6);
@@ -249,6 +248,25 @@ mod tests {
         assert_eq!(a / b, Val(3));
         assert_eq!(a % b, Val(2));
         assert_eq!(0, *Val::default());
+    }
+
+    #[test]
+    fn normal_u32() {
+        int_alias!(Val, i32);
+        let a = Val(20);
+        assert_eq!(*a, 20);
+        let b = Val(6);
+        assert_eq!(a + b, Val(26));
+        assert_eq!(a - b, Val(14));
+        assert_eq!(a * b, Val(120));
+        assert_eq!(a / b, Val(3));
+        assert_eq!(a % b, Val(2));
+        assert_eq!(0, *Val::default());
+    }
+
+    #[test]
+    fn normal_f64() {
+        float_alias!(Fval, f64);
         let a = Fval(20.0);
         let b = Fval(6.0);
         assert_eq!(a + b, Fval(26.0));
@@ -256,6 +274,7 @@ mod tests {
         assert_eq!(a * b, Fval(120.0));
         assert_eq!(a / b, Fval(20.0 / 6.0));
         assert_eq!(a % b, Fval(2.0));
+        assert_eq!(-a, Fval(-20.0));
         assert_eq!(a.sqrt(), 20.0f64.sqrt());
         assert_eq!(0.0, *Fval::default());
     }
